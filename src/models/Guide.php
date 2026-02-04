@@ -35,36 +35,42 @@ class Guide {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function create($title,$content,$image,$userId){
+    public function create($title,$content,$image,$user){
 
-        $stmt = $this->db->prepare("
-            INSERT INTO guides(title,content,image,user_id)
-            VALUES (?,?,?,?)
-        ");
+    $stmt = $this->db->prepare("
+        INSERT INTO guides
+        (title, content, image, user_id, created_at)
+        VALUES (:t,:c,:i,:u,NOW())
+    ");
 
-        return $stmt->execute([
-            $title,
-            $content,
-            $image,
-            $userId
-        ]);
+    $stmt->execute([
+
+        ':t'=>$title,
+        ':c'=>$content,
+        ':i'=>$image,
+        ':u'=>$user
+    ]);
+
+    return $this->db->lastInsertId();
     }
+
 
     public function update($id,$title,$content,$image){
 
-        $stmt = $this->db->prepare("
-            UPDATE guides
-            SET title=?, content=?, image=?
-            WHERE id=?
-        ");
+    $stmt = $this->db->prepare("
+        UPDATE guides
+        SET title = ?, content = ?, image = ?
+        WHERE id = ?
+    ");
 
-        return $stmt->execute([
-            $title,
-            $content,
-            $image,
-            $id
-        ]);
+    return $stmt->execute([
+        $title,
+        $content,
+        $image,
+        $id
+    ]);
     }
+
 
     public function delete($id){
 
@@ -86,4 +92,53 @@ class Guide {
 
         return $stmt->fetch() !== false;
     }
+
+    public function removeImage($id){
+
+    $stmt = $this->db->prepare("
+        UPDATE guides
+        SET image = NULL
+        WHERE id = ?
+    ");
+
+    return $stmt->execute([$id]);
+    }
+
+    public function search($q){
+
+    $stmt = $this->db->prepare("
+        SELECT DISTINCT g.*
+        FROM guides g
+        LEFT JOIN guide_categories gc ON g.id = gc.guide_id
+        LEFT JOIN categories c ON gc.category_id = c.id
+        WHERE
+            g.title ILIKE ?
+            OR g.content ILIKE ?
+            OR c.name ILIKE ?
+        ORDER BY g.created_at DESC
+    ");
+
+    $like = "%$q%";
+
+    $stmt->execute([$like,$like,$like]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getByCategory($catId){
+
+    $stmt = $this->db->prepare("
+        SELECT g.*
+        FROM guides g
+        JOIN guide_categories gc
+        ON g.id = gc.guide_id
+        WHERE gc.category_id = ?
+        ORDER BY g.created_at DESC
+    ");
+
+    $stmt->execute([$catId]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }   
+
 }

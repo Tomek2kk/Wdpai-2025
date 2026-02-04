@@ -1,0 +1,44 @@
+<h1>AutoFix</h1>
+
+<div class="home-search">
+
+    <form method="GET" action="/">
+
+        <input type="hidden" name="action" value="search">
+
+        <input type="text"
+               name="q"
+               placeholder="Szukaj poradników..."
+               class="search-box">
+
+        <button>🔍 Szukaj</button>
+
+    </form>
+
+</div>
+
+
+<hr>
+
+
+<h3>Kategorie</h3>
+
+<div class="categories-grid">
+
+{{categories}}
+
+</div>
+
+
+<hr>
+
+
+<h3>Poradniki</h3>
+
+{{add_button}}
+
+<div class="guides">
+
+{{guides}}
+
+</div>

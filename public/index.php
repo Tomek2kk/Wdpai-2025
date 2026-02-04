@@ -4,44 +4,87 @@ session_start();
 
 define('ROOT_PATH', dirname(__DIR__));
 
+require_once ROOT_PATH.'/config/database.php';
+
+require_once ROOT_PATH.'/src/helpers/View.php';
+require_once ROOT_PATH.'/src/helpers/Auth.php';
+
 require_once ROOT_PATH.'/src/controllers/AuthController.php';
 require_once ROOT_PATH.'/src/controllers/GuideController.php';
+require_once ROOT_PATH.'/src/controllers/CommentController.php';
+require_once ROOT_PATH.'/src/controllers/RatingController.php';
+require_once ROOT_PATH.'/src/controllers/UserAdminController.php';
 
-$action = $_GET['action'] ?? 'home';
+$action = $_GET['action'] ?? '';
 
-$auth  = new AuthController();
-$guide = new GuideController();
 
 switch($action){
 
+    case '':
+    case 'home':
+        (new GuideController)->index();
+        break;
+
     case 'login':
-        $auth->login();
+        (new AuthController)->login();
         break;
 
     case 'register':
-        $auth->register();
+        (new AuthController)->register();
         break;
 
     case 'logout':
-        $auth->logout();
-        break;
-
-    case 'create-guide':
-        $guide->create();
-        break;
-
-    case 'edit-guide':
-        $guide->edit();
-        break;
-
-    case 'delete-guide':
-        $guide->delete();
+        (new AuthController)->logout();
         break;
 
     case 'show-guide':
-        $guide->show();
+        (new GuideController)->show();
+        break;
+
+    case 'add-guide':
+        (new GuideController)->create();
+        break;
+
+    case 'edit-guide':
+        (new GuideController)->edit();
+        break;
+
+    case 'delete-guide':
+        (new GuideController)->delete();
+        break;
+
+    case 'search':
+        (new GuideController)->search();
+        break;
+
+    case 'api-add-comment':
+        (new CommentController)->add();
+        break;
+
+    case 'api-delete-comment':
+        (new CommentController)->delete();
+        break;
+
+    case 'api-rate':
+        (new RatingController)->rate();
+        break;
+
+    case 'admin-users':
+        (new UserAdminController)->index();
+        break;
+
+    case 'admin-delete-user':
+        (new UserAdminController)->delete();
+        break;
+
+    case 'admin-toggle':
+        (new UserAdminController)->toggle();
         break;
 
     default:
-        $guide->index();   
+
+        http_response_code(404);
+
+        echo "<h1>404 - Nie znaleziono strony</h1>";
+        break;
 }

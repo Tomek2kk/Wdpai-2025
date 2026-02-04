@@ -10,7 +10,6 @@ class AuthController {
         $this->user = new User();
     }
 
-    /* Logowanie */
     public function login(){
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -22,8 +21,10 @@ class AuthController {
 
             if($result){
 
-                $_SESSION['user_id'] = $result['id'];
-                $_SESSION['role'] = $result['role_id'];
+                $_SESSION['user_id']  = $result['id'];
+                $_SESSION['role']     = $result['role_id'];
+                $_SESSION['username'] = $result['username'];
+
 
                 header("Location: /");
                 exit;
@@ -32,10 +33,13 @@ class AuthController {
             $error = "Nieprawidłowy email lub hasło";
         }
 
-        require ROOT_PATH . '/src/views/auth/login.php';
+        View::render('auth/login',[
+            'title'=>'Logowanie',
+            'error'=>$error ?? ''
+        ]);
+
     }
 
-    /* Rejestracja */
     public function register(){
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -43,9 +47,8 @@ class AuthController {
             $username = trim($_POST['username']);
             $email    = trim($_POST['email']);
             $password = $_POST['password'];
-            $confirm  = $_POST['confirm'];
+            $confirm = $_POST['confirm'] ?? '';
 
-            /* Walidacja */
             if(strlen($username) < 3){
                 $error = "Login min. 3 znaki";
             }
@@ -67,10 +70,13 @@ class AuthController {
             }
         }
 
-        require ROOT_PATH . '/src/views/auth/register.php';
+        View::render('auth/register',[
+            'title'=>'Rejestracja',
+            'error'=>$error ?? ''
+        ]);
+
     }
 
-    /* Wylogowanie */
     public function logout(){
         session_destroy();
 

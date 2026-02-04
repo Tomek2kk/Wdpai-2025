@@ -1,14 +1,14 @@
 FROM php:8.2-apache
 
-# Instalacja PDO PostgreSQL
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Włączenie mod_rewrite
 RUN a2enmod rewrite
 
-# Ustawienie katalogu public
+RUN echo "upload_max_filesize=10M" >> /usr/local/etc/php/php.ini \
+ && echo "post_max_size=10M" >> /usr/local/etc/php/php.ini
+
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
 RUN sed -ri \
