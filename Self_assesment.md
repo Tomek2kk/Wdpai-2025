@@ -7,7 +7,7 @@
 [ + ] HTML
 [ + ] PostgreSQL
 [ + ] Złożoność bazy danych
-[ - ] Eksport bazy danych do pliku .sql
+[ + ] Eksport bazy danych do pliku .sql
 [ + ] PHP
 [ + ] JavaScript
 [ + ] Fetch API (AJAX)
